@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block body %}
+            <div id="content">
+                     <div class="col-md-12 col-md-offset-1" >
+                        <div class="col-md-10">
+                  <div class="col-md-12 panel">
+                    <div class="col-md-12 panel-heading">
+                     <h3> {% block title %}
+                          {% if add_user %}Add User
+                          {% else %}Edit User
+                          {% endif %}
+                          {% endblock %}</h3>
+                    </div>
+                    <div class="col-md-12 panel-body" style="padding-bottom:30px;">
+                      <div class="col-md-12">
+                       {% if add_user %}
+                              <form class="cmxform"  method="POST">
+                          {% else %}
+                              <form class="cmxform"  method="POST">
+                          {% endif %}
+
+                          <div class="col-md-6">
+                            <div class="form-group form-animate-text" style="margin-top:40px">
+                             {{form.email(class='form-text',type='text',autocomplete="off")}}
+                              <span class="bar"></span>
+                              <label>Email</label>
+                            </div>
+
+                            {% if add_user %}
+                              <div class="form-group form-animate-text" style="margin-top:40px">
+                              {{form.password(class='form-text',type='password',autocomplete="off")}}
+                              <span class="bar"></span>
+                              <label>Password</label>
+                            </div>
+                          {% else %}
+                          {% endif %}
+
+                            <div class="form-group form-animate-text" style="margin-top:40px">
+                              {{form.first_name(class='form-text',type='text',autocomplete="off")}}
+                              <span class="bar"></span>
+                              <label>First Name</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="form-group form-animate-text" style="margin-top:40px">
+                              {{form.username(class='form-text',type='text',autocomplete="off")}}
+                              <span class="bar"></span>
+                              <label>Username</label>
+                            </div>
+                           {% if add_user %}
+                              <div class="form-group form-animate-text" style="margin-top:40px">
+                              {{form.confirm_password(class='form-text',type='password',autocomplete="off")}}
+                              <span class="bar"></span>
+                              <label>Confirm Password</label>
+                            </div>
+                          {% else %}
+                          {% endif %}
+                            <div class="form-group form-animate-text" style="margin-top:40px">
+                             {{form.last_name(class='form-text',type='text',autocomplete="off")}}
+                              <span class="bar"></span>
+                              <label>Last Name</label>
+                            </div>
+                          </div>
+                          <div class="col-md-12">
+                              <div class="form-group form-animate-checkbox">
+                               {{form.is_admin(class='checkbox',id='check',type='checkbox')}}
+                                  <label>Is Admin</label>
+                              </div>
+                              {% if add_user %}
+                              {{form.submit(class='submit btn btn-danger"')}}
+                              {% else %}
+                                <input type="submit" class="submit btn btn-danger" name="submit" value="Edit">
+                          {% endif %}
+                        </div>
+                             {{ form.csrf_token }}
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+                        <div class="col-md-6">
+                          <div class="alert alert-danger alert-gradient alert-dismissible fade in" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <strong>Danger!</strong> Best check yo self, you're not looking too good.
+                          </div>
+                        </div>
+                  </div>
+                </div>
+              </div>
+             </div>
+            </div>
+
+
+{% endblock %}
+
+{% block scriptjs %}
+    <script>
+$('#check').on('change', function(){
+  $(this).val(this.checked ? "True" : "False");
+})</script>
+{% endblock %}

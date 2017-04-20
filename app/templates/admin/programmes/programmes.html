@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block body %}
+            <div id="content">
+                <div class="col-md-12 top-20 padding-0">
+                     <div style="text-align: center ;margin-bottom: 15px">
+                        <hr class="intro-divider">
+                           <a href="{{ url_for('admin.add_programme') }}" class="btn btn-default btn-lg">
+                                <i class="fa fa-plus"></i>
+                                 Add programme
+                           </a>
+                     </div>
+                     <div class="col-md-12">
+                  <div class="panel">
+                    <div class="panel-heading"><h3>Programme Table</h3></div>
+                    <div class="panel-body">
+                      <div class="responsive-table">
+                      <table id="datatables-user" class="table table-striped table-bordered" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Version</th>
+                          <th>Link</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                       {% for programme in programmes %}
+                       <tr>
+                          <td>{{programme.name}}</td>
+                          <td>{{programme.version }}</td>
+                          <td>{{programme.link }}</td>
+                       <td>
+                    <a href="{{ url_for('admin.edit_programme', id=programme.id) }}">
+                      <i class="fa fa-pencil"></i> Edit
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url_for('admin.delete_programme', id=programme.id) }}">
+                      <i class="fa fa-trash"></i> Delete
+                    </a>
+                  </td>
+
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                        </table>
+                      </div>
+                  </div>
+                </div>
+              </div>
+                </div>
+            </div>
+
+
+{% endblock %}
+
+{% block scriptjs %}
+<script src="{{ url_for('static', filename='js/plugins/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plugins/jquery.datatables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plugins/datatables.bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/plugins/jquery.nicescroll.js') }}"></script>
+    <script type="text/javascript">
+  $(document).ready(function(){
+    $('#datatables-user').DataTable();
+  });
+</script>
+{% endblock %}

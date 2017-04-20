@@ -1,0 +1,416 @@
+{% extends "base.html" %}
+
+{% block angularjs %}
+     <script>
+angular.module('myApp', [])
+            .controller('DashCtrl', function($scope, $http) {
+
+                $scope.info = {};
+                var programme = [];
+
+                $scope.showConnect = true;
+
+                $scope.executesh = function () {
+                     $('#check :checked').each(function() {
+                         var p = {id:'',name:''}
+                         p.id=$(this).attr('alt');
+                         p.name=$(this).attr('name');
+                         programme.push(p);
+                                                });
+                   var id = $('#btn_install').attr('name');
+                   var oracle  = {user:'',sid:''};
+                   oracle.sid= $("#oracle-sid").val();
+                   oracle.user =$("#oracle-user").val();
+                   var folderinstaller = $("#installer-user").val();
+                   $("#cont").css("display","none");
+                   $("#loading").css("display","block");
+					$scope.con = {};
+					$http({
+						method: 'POST',
+						url: '/ssh/execute',
+						data: {id:id,program:programme,folder:folderinstaller,oracle:oracle}
+					}).then(function(response) {
+						console.log(response);
+						$scope.con = response.data;
+						 $("#cont").css("display","block");
+                         $("#loading").css("display","none");
+					}, function(error) {
+						console.log(error);
+					});
+                }
+
+                $scope.database = function () {
+                    var db = {username:'',pass:'',sid:'',schema:'',dumpfile:'',remptarget:'',rempsource:'',logfile:'',type:''}
+                    db.type = $('#tel :checked').val();
+                    db.username =$('#username_db').val();
+                    db.pass =$('#password_db').val();
+                    db.sid=$('#data_base_db').val();
+                    db.schema=$('#schema_db').val();
+                    db.dumpfile=$('#dumpfile_db').val();
+                    db.remptarget=$('#remap_target_name').val();
+                    db.rempsource=$('#remap-src_name').val();
+                    db.logfile=$('#logfile_name').val();
+                    var id =$('#btn_sub_db').attr('name');
+                    $http({
+						method: 'POST',
+						url: '/ssh/dbase',
+						data: {id:id,db:db}
+					}).then(function(response) {
+						console.log(response);
+						$scope.con = response.data;
+						 $("#cont").css("display","block");
+                         $("#loading").css("display","none");
+					}, function(error) {
+						console.log(error);
+					});
+
+                }
+                $scope.solifeinst = function () {
+                    var solife = {path:'',jbhost:'',host:'',sid:'',dbuser:'',jbhome:'',jvhome:'',port:'',action:''}
+                    solife.path=$('#path_solife').val();
+                    solife.jbhost=$('#jb_host_solife').val();
+                    solife.host=$('#host_solife').val();
+                    solife.sid=$('#sid_solife').val();
+                    solife.dbuser=$('#db_user_solife').val();
+                    solife.jbhome=$('#jb_home').val();
+                    solife.jvhome=$('#java_home').val();
+                    solife.port=$('#port_solife').val();
+                    solife.action=$('#action :checked').val();
+                    $http({
+						method: 'POST',
+						url: '/ssh/solife',
+						data: {id:id,solife:solife}
+					}).then(function(response) {
+						console.log(response);
+						$scope.con = response.data;
+						 $("#cont").css("display","block");
+                         $("#loading").css("display","none");
+					}, function(error) {
+						console.log(error);
+					});
+                }
+            })
+
+    </script>
+{% endblock %}
+
+
+{% block body %}
+<div id="disablingv"  ng-controller="DashCtrl">
+<div id="content">
+            <div class="tabs-wrapper text-center">
+             <div class="panel box-shadow-none text-left content-header">
+                  <div class="panel-body" style="padding-bottom:0px;">
+                    <div class="col-md-12">
+                        <h3 class="animated fadeInLeft">VM MACHINE</h3>
+                        <p class="animated fadeInDown">
+                         VM MACHINE <span class="fa-angle-right fa"></span> {{ machine.name }}
+                        </p>
+                    </div>
+                    <ul id="tabs-demo" class="nav nav-tabs content-header-tab" role="tablist" style="padding-top:10px;">
+                      <li role="presentation" class="active">
+                        <a href="#tabs-area-demo" id="tabs2" data-toggle="tab"></a>
+                      </li>
+                    </ul>
+                  </div>
+              </div>
+
+            <div class="col-md-12 tab-content" id="cont">
+              <div role="tabpanel" class="tab-pane fade active in" id="tabs-area-demo" aria-labelledby="tabs1">
+                <div class="col-md-12">
+                  <div class="col-md-12">
+                    <div class="col-md-12 tabs-area">
+                      <div class="liner"></div>
+                      <ul class="nav nav-tabs nav-tabs-v5" id="tabs-demo6">
+                        <li class="active">
+                         <a href="#tabs-demo6-area1" data-toggle="tab" title="welcome">
+                          <span class="round-tabs three">
+                            <i class="glyphicon fa-download"></i>
+                          </span>
+                        </a>
+                      </li>
+
+                      <li>
+                        <a href="#tabs-demo6-area2" data-toggle="tab" title="profile">
+                         <span class="round-tabs three">
+                           <i class="glyphicon  fa-database"></i>
+                         </span>
+                       </a>
+                     </li>
+
+                     <li>
+                      <a href="#tabs-demo6-area3" data-toggle="tab" title="bootsnipp goodies">
+                       <span class="round-tabs three">
+                        <i class="glyphicon fa-clone"></i>
+                      </span> </a>
+                    </li>
+
+                    <li>
+                      <a href="#tabs-demo6-area4" data-toggle="tab" title="blah blah">
+                       <span class="round-tabs three">
+                         <i class="glyphicon glyphicon-comment"></i>
+                       </span>
+                     </a>
+                   </li>
+
+                   <li><a href="#tabs-demo6-area5" data-toggle="tab" title="completed">
+                     <span class="round-tabs three">
+                      <i class="glyphicon glyphicon-ok"></i>
+                    </span> </a>
+                  </li>
+                </ul>
+                <div class="tab-content tab-content-v5">
+                  <div class="tab-pane fade in active" id="tabs-demo6-area1">
+
+                    <h3 class="head text-center">Install Environment of Development</h3>
+                    <p class="narrow text-center">
+                        <div class="col-md-12 col-sm-12" id="check">
+                      {% for item in program %}
+                      <div class="col-md-4 panel" style="padding:20px;padding-bottom:0px;">
+                           <div class="form-group form-animate-checkbox">
+                          <input id="{{ item.name }}-check" name="{{ item.name }}" alt="{{item.id}}" type="checkbox" class="checkbox">
+                          <label> {{ item.name }}</label>
+                        </div>
+                      </div>
+                      {% endfor %}
+                      <div class="col-md-12 col-sm-12" id="prop-oracle" style="display: none">
+                       <div class="col-md-6">
+                            <div class="form-group form-animate-text" style="margin-top:40px">
+                              <input id="oracle-user" class='form-text',type='text',autocomplete="off">
+                              <span class="bar"></span>
+                              <label>Oracle USER</label>
+                            </div>
+                       </div>
+                       <div class="col-md-6">
+                            <div class="form-group form-animate-text" style="margin-top:40px">
+                              <input id="oracle-sid" class='form-text',type='text',autocomplete="off">
+                              <span class="bar"></span>
+                              <label>Oracle SID</label>
+                            </div>
+                       </div>
+                      </div>
+                     <div class="col-md-12 col-sm-12">
+                       <div class="col-md-12">
+                            <div class="form-group form-animate-text" style="margin-top:40px">
+                              <input id="installer-user" class='form-text',type='text',autocomplete="off">
+                              <span class="bar"></span>
+                              <label>Installer Folder</label>
+                            </div>
+                       </div>
+                     </div>
+
+
+                    <p class="text-center">
+                      <button ng-click="executesh()" name="{{ machine.id }}" id="btn_install" class="btn btn-success btn-round green"> Start Install <span style="margin-left:10px;" class="glyphicon glyphicon-send"></span></button>
+                    </p>
+                  </div>
+                </div>
+                  <div class="tab-pane fade" id="tabs-demo6-area2">
+                       <div class="row">
+        <div id="form_database_export" >
+            <div class="form-group">
+                <label>
+                    Username
+                </label>
+                <input type="text" class="form-control" id="username_db" name="username_imp">
+            </div>
+            <div class="form-group">
+                <label>
+                    Password
+                </label>
+                <input type="text" class="form-control" id="password_db" name="password_imp">
+            </div>
+            <div class="form-group">
+                <label>
+                    DataBase
+                </label>
+                <input type="text" class="form-control" id="data_base_db" name="data_base_imp">
+            </div>
+            <div class="col-md-6 column ui-sortable">
+                <div class="form-group">
+                    <label>
+                        Schema
+                    </label>
+                    <input type="text" class="form-control" id="schema_db" name="schema_imp">
+                </div>
+            </div>
+            <div class="col-md-6 column ui-sortable">
+                <div class="form-group">
+                    <label>
+                        Dumpfile
+                    </label>
+                    <input type="text" class="form-control" id="dumpfile_db" name="dumpfile_name">
+                </div>
+            </div>
+             <div class="form-group col-md-12 column ui-sortable" id="tel">
+                 <label class="col-md-4 control-label text-right">Type</label>
+                              <div class="col-md-6">
+                                <div class="col-md-2 padding-0">
+                                  <input type="radio" name="type" id="ex" value="exp" checked> Export
+                                </div>
+                                <div class="col-md-2 padding-0">
+                                  <input type="radio" name="type" id="impo" value="imp"> Import
+                                </div>
+                              </div>
+             </div>
+            <div id="export">
+                 <div class="col-md-6 column ui-sortable">
+                <div class="form-group">
+                    <label>
+                        RemaptableSpace source_tablespace
+                    </label>
+                    <input type="text" class="form-control" id="remap-src_name" >
+                </div>
+            </div>
+            <div class="col-md-6 column ui-sortable">
+                <div class="form-group">
+                    <label>
+                        RemaptableSpace target_tablespace
+                    </label>
+                    <input type="text" class="form-control" id="remap_target_name" >
+                </div>
+            </div>
+            <br>
+            </div>
+            <div id="import" style="display: none">
+                <div class="col-md-12 column ui-sortable">
+                <div class="form-group">
+                    <label>
+                        Log file name
+                    </label>
+                    <input type="text" class="form-control" id="logfile_name" name="logfile_name">
+                </div>
+            </div>
+
+            </div>
+
+
+            <button type="button" ng-click="database()" class="btn btn-primary" id="btn_sub_db" name="{{ machine.id }}">
+                Submit
+            </button>
+
+        </div>
+
+    </div>
+                  </div>
+                  <div class="tab-pane fade" id="tabs-demo6-area3">
+                     <div class="row">
+        <div id="form_database_install" >
+            <div class="form-group">
+                <label>
+                    Path
+                </label>
+                <input type="text" class="form-control" id="path_solife" name="username">
+            </div>
+            <div class="form-group">
+                <label>
+                    Jboss Host Name
+                </label>
+                <input type="text" class="form-control" id="jb_host_solife" name="username">
+            </div>
+            <div class="form-group">
+                <label>
+                    Hostname
+                </label>
+                <input type="text" class="form-control" id="host_solife" name="username">
+            </div>
+            <div class="form-group">
+                <label>
+                    SID
+                </label>
+                <input type="text" class="form-control" id="sid_solife" name="username">
+            </div>
+            <div class="form-group">
+                <label>
+                    Database User
+                </label>
+                <input type="text" class="form-control" id="db_user_solife" name="username">
+            </div>
+            <div class="form-group">
+                <label>
+                    JBOSS Home
+                </label>
+                <input type="text" class="form-control" id="Jb_home" name="username">
+            </div>
+            <div class="form-group">
+                <label>
+                    Java Home
+                </label>
+                <input type="text" class="form-control" id="java_home" name="username">
+            </div>
+             <div class="form-group">
+                <label>
+                    Port
+                </label>
+                <input type="number" class="form-control" id="port_solife" name="username">
+            </div>
+
+        <div class="form-group col-md-12 column ui-sortable" id="action">
+                 <label class="col-md-4 control-label text-right">Action</label>
+                              <div class="col-md-6">
+                                <div class="col-md-2 padding-0">
+                                  <input type="radio" name="acte" id="inst" value="install" checked> Install
+                                </div>
+                                <div class="col-md-2 padding-0">
+                                  <input type="radio" name="acte" id="upda" value="update"> Update
+                                </div>
+                              </div>
+             </div>
+            <button type="button" ng-click="solifeinst()" class="btn btn-primary" id="btn_solife" name="{{ machine.id }}">
+                Submit
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+                  </div>
+                  <div class="tab-pane fade" id="tabs-demo6-area4">
+                  </div>
+                  <div class="tab-pane fade" id="tabs-demo6-area5">
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+            </div>
+              </div>
+              </div>
+            </div>
+
+            </div>
+
+            <div id="loading" class="col-md-12 tab-content" style="display: none">
+                     <div class="sk-chasing-dots">
+                      <div class="sk-child sk-dot1"></div>
+                      <div class="sk-child sk-dot2"></div>
+                      </div>
+                </div>
+
+
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block scriptjs %}
+    <script>
+$('#Oracle-check').click(function() {
+    $("#prop-oracle").toggle(this.checked);
+});
+$('input[type="radio"]').click(function() {
+       if($(this).attr('id') == 'impo') {
+            $('#import').css('display','block');
+            $('#export').css('display','none');
+       }
+
+       else if($(this).attr('id') == 'ex'){
+            $('#import').css('display','none');
+            $('#export').css('display','block');
+       }
+   });
+
+</script>
+{% endblock %}

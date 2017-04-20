@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block angularjs %}
+     <script>
+angular.module('myApp', [])
+            .controller('DashCtrl', function($scope, $http) {
+
+                $scope.info = {};
+
+                $scope.showConnect = true;
+
+                $scope.showConnectPopup = function (id) {
+                    $scope.info.id = id;
+					$scope.con = {};
+					$http({
+						method: 'POST',
+						url: 'machines/find/'+$scope.info.id,
+						data: {id:$scope.info.id}
+					}).then(function(response) {
+						console.log(response);
+						$scope.con = response.data;
+						$('#ConnectPopUp').modal('show');
+					}, function(error) {
+						console.log(error);
+					});
+                }
+            })
+
+    </script>
+{% endblock %}
+
+{% block body %}
+
+            <div id="content" >
+                       <div class="panel box-shadow-none content-header">
+                  <div class="panel-body">
+                    <div class="col-md-12">
+                        <h3 class="animated fadeInLeft">Dashboard</h3>
+                        <p class="animated fadeInDown">
+                          Pages <span class="fa-angle-right fa"></span> Dashbord
+                        </p>
+                    </div>
+                  </div>
+              </div>
+              <div class="col-md-12">
+                  <div class="row">
+                 {% for machine in machines %}
+                    <div class="col-sm-6 col-md-3 product-grid">
+                      <div class="thumbnail">
+                        <div  class="product-price product-price-bottom">
+                          <h4>{{ machine.name }}</h4>
+                        </div>
+                          {% if machine.os=="windows" %}
+                              <img src="{{ url_for('static', filename='img/windows.jpg') }}" alt="...">
+                          {% else %}
+                              <img src="{{ url_for('static', filename='img/redhat.png') }}" alt="...">
+                          {% endif %}
+                        <div class="caption">
+                          <h5>{{ machine.userName }}</h5>
+                          <small class="pull-right">
+                          </small>
+                          <h4>{{ machine.ipAddress }}</h4>
+                          <p>{{ machine.os }}</p>
+                           <div class="row">
+                            <div class="col-sm-6 ">
+                                <p id="btn1"><a href="" ng-click="showConnectPopup('{{ machine.id}}')" class="btn btn-primary btn_preconnect" role="button">Connect</a></p>
+                            </div>
+                            <div class="col-sm-6 next">
+                                <p><a href="#" class="btn btn-info pull-right" role="button">Info</a></p>
+                            </div>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                  </div>
+            </div>
+
+                         <div class="col-xs-12">
+                                <div class="modal fade " id="ConnectPopUp">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">Connect To Machine</h4>
+                                      </div>
+                                        <form method="POST" action="">
+                                      <div class="modal-body">
+
+                            <h5> IP :</h5>
+                            <h3>{{'{{ con.ipAddress }}' }}</h3>
+                            <h5> Username:</h5>
+                            <h3>{{ '{{ con.userName }}' }}</h3>
+                            {{ form.id(type="hidden",value="{{ con.id }}") }}
+                            <label>
+                                Password
+                            </label>
+                            {{form.password(type="password", class="form-control",  id="password-pop")}}
+
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        {{ form.submit(class="btn btn-primary" )}}
+                                        {{ form.csrf_token }}
+                                      </div>
+                                     </form>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                            </div>
+
+{% endblock %}

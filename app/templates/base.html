@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="RemoteControle Template">
+	<meta name="keyword" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} | Dashbord</title>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/font-awesome.min.css') }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/simple-line-icons.css') }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/simple-line-icons.css') }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/animate.min.css') }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/fullcalendar.min.css') }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/spinkit.css') }}"/>
+	  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+      <link rel="shortcut icon" href="{{ url_for('static', filename='img/logomi.png') }}">
+    <script src="{{ url_for('static', filename='js/angular.js') }}"></script>
+
+
+    {% block angularjs %}{% endblock %}
+
+  </head>
+<body id="mimin" class="dashboard" ng-controller="DashCtrl">
+        <nav class="navbar navbar-default header navbar-fixed-top">
+          <div class="col-md-12 nav-wrapper">
+            <div class="navbar-header" style="width:100%;">
+                <a href="index.html" class="navbar-brand">
+                 <b>Remote Controle</b>
+                </a>
+                {% if current_user.is_authenticated %}
+              <ul class="nav navbar-nav navbar-right user-nav">
+                <li class="user-name"><span>{{ current_user.username }}</span></li>
+                  <li class="dropdown avatar-dropdown">
+                   <img src="{{ url_for('static', filename='img/avatar.png') }}" class="img-circle avatar" alt="user name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"/>
+                </li>
+                <li ><a href="{{ url_for('auth.logout') }}"><span class="fa fa-power-off"></span></a></li>
+              </ul>
+                {% endif %}
+            </div>
+          </div>
+        </nav>
+      <div class="container-fluid mimin-wrapper">
+      <div id="left-menu">
+              <div class="sub-left-menu scroll">
+                <ul class="nav nav-list">
+                    <li><div class="left-bg"></div></li>
+                    <li class="time">
+                      <h1 class="animated fadeInLeft"></h1>
+                      <p class="animated fadeInRight"></p>
+                    </li>
+                    <li><a href="{{ url_for('home.dashboard') }}" class="tree-toggle nav-header"><span class="fa-home fa"></span>Dashboard</a></li>
+                      {% if current_user.is_admin %}
+                    <li class="active ripple">
+                      <a class="tree-toggle nav-header"><span class="fa-search-plus fa"></span>Administration
+                        <span class="fa-angle-right fa right-arrow text-right"></span>
+                      </a>
+                      <ul class="nav nav-list tree">
+                          <li><a href="{{ url_for('admin.list_machines') }}">Gestion Machine Virtuel</a></li>
+                          <li><a href="{{ url_for('admin.list_users') }}">Gestion Utilisateur</a></li>
+                          <li><a href="{{ url_for('admin.list_configs') }}">Gestion Configuration</a></li>
+                          <li><a href="{{ url_for('admin.list_programmes') }}">Gestion Progarmme</a></li>
+                      </ul>
+                    </li>
+                    {% endif %}
+                  </ul>
+                </div>
+      </div>
+  {% block body %}{% endblock %}
+      </div>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.ui.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/jquery.nicescroll.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/jquery.vmap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/maps/jquery.vmap.world.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/jquery.vmap.sampledata.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scriptjs %}{% endblock %}
+  </body>
+</html>

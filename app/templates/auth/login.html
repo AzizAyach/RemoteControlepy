@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="RemoteControle Template">
+	<meta name="keyword" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} | Dashbord</title>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/font-awesome.min.css') }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/simple-line-icons.css') }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/simple-line-icons.css') }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/animate.min.css') }}"/>
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plugins/fullcalendar.min.css') }}"/>
+	  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+      <link rel="shortcut icon" href="{{ url_for('static', filename='img/logomi.png') }}">
+  </head>
+ <body id="mimin" class="dashboard form-signin-wrapper">
+
+      <div class="container">
+
+        <form class="form-signin" method="post" action="/login">
+          <div class="panel periodic-login">
+              <div class="panel-body text-center">
+                  <h1>Remote Controle</h1>
+                  <p class="element-name">Vermeg</p>
+                  <i class="icons icon-arrow-down"></i>
+                  <p class="atomic-mass" style="margin-top: 10px">
+                      {% with messages = get_flashed_messages() %}
+                          {% if messages %}
+                      {% for message in messages %}
+                       <p class="atomic-mass">{{ message }}</p>
+                      {% endfor %}
+                          {% endif %}
+                       {% endwith %}
+                  <div class="form-group form-animate-text" style="margin-top:40px;">
+                    {{form.email(class='form-text',type='text',autocomplete="off")}}
+                    <span class="bar"></span>
+                    <label>Email</label>
+                  </div>
+                  <div class="form-group form-animate-text" style="margin-top:40px;">
+                    {{form.password(class='form-text',type='password')}}
+                    <span class="bar"></span>
+                    <label>Password</label>
+                  </div>
+                  {{form.submit(class='btn col-md-12',value="Login")}}
+              </div>
+              {{ form.csrf_token }}
+          </div>
+        </form>
+
+      </div>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.ui.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/jquery.nicescroll.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/jquery.vmap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/maps/jquery.vmap.world.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/jquery.vmap.sampledata.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/plugins/chart.min.js') }}"></script>
+
+     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  </body>
+</html>
