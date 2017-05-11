@@ -4,112 +4,41 @@ from ..models import VmMachine
 from . import ssh
 from app import db
 from fabric.api import run,env,execute
-from testtwo import TestTwo
-import winrm
-folder =''
-user = ''
-sid=''
+import sshfunc
+import os
 @ssh.route('/ssh/connect/<int:id>', methods=['GET', 'POST'])
 @login_required
 def conection(id):
    machine = VmMachine.query.get_or_404(id)
    programme = db.engine.execute("SELECT * FROM programme WHERE NOT name='solife';")
-   return render_template('ssh/home.html',machine=machine, program=programme)
-
-
-def installJava():
-   try:
-      run('cd '+folder+' && chmod +x install_db_software.sh && ./install_db_software.sh')
-      return jsonify(status='OK', message='updated successfully')
-   except Exception, e:
-      print('' + str(e))
-      return jsonify(status='OK', message='updated successfully')
-
-
-def installOracle():
-   try:
-      run('cd ' + folder + ' && chmod +x install_db_software.sh && ./install_db_software.sh')
-      return jsonify(status='OK', message='updated successfully')
-   except Exception, e:
-      print('' + str(e))
-      return jsonify(status='OK', message='updated successfully')
-def installJboss():
-   try:
-      run('cd ' + folder + ' && chmod +x install_db_software.sh && ./install_db_software.sh')
-      return jsonify(status='OK', message='updated successfully')
-   except Exception, e:
-      print('' + str(e))
-      return jsonify(status='OK', message='updated successfully')
-
-
-
-def installenvrWindows(machine):
-   try:
-      s = winrm.Session(machine.ipAddress, auth=(machine.userName, machine.password))
-      r = s.run_ps('& "C:\Scripts\test.ps1" ')
-      print (r.std_out)
-   except Exception, e:
-      print (e)
-      print(r.status_code)
-      print(r.std_err)
-
-def datamaniplinux(dump):
-   imp = 'impdp '+dump['username']+'/'+dump['pass']+'@'\
-         +dump['sid']+' directory=DATAPUMP dumpfile='+dump['dumpfile']+'.EXP logfile= imp-'+dump['logfile']\
-         +'.log schemas='+dump['schema']+' remap_tablespace='+dump['rempsource']+':'+dump['remptarget']
-   exp = 'expdp '+dump['username']+'/'+dump['pass']+'@'+dump['sid']+' schemas='+dump['schema']\
-         +' directory=DATAPUMP dumpfile='+dump['dumpfile']+'.EXP logfile='+dump['logfile']+'.log'
-   try:
-      if(dump['type']=='imp'):
-       run(imp)
-      elif(dump['type']=='exp'):
-       run(exp)
-      return jsonify(status='OK', message='updated successfully')
-   except Exception, e:
-      print('' + str(e))
-      return jsonify(status='OK', message='updated successfully')
-def datamanipwindows(dump):
-   imp = 'impdp '+dump['username']+'/'+dump['pass']+'@'\
-         +dump['sid']+' directory=DATAPUMP dumpfile='+dump['dumpfile']+'.EXP logfile= imp-'+dump['logfile']\
-         +'.log schemas='+dump['schema']+' remap_tablespace='+dump['rempsource']+':'+dump['remptarget']
-   exp = 'expdp '+dump['username']+'/'+dump['pass']+'@'+dump['sid']+' schemas='+dump['schema']\
-         +' directory=DATAPUMP dumpfile='+dump['dumpfile']+'.EXP logfile='+dump['logfile']+'.log'
-   try:
-      if(dump['type']=='imp'):
-       run(imp)
-      elif(dump['type']=='exp'):
-       run(exp)
-      return jsonify(status='OK', message='updated successfully')
-   except Exception, e:
-      print('' + str(e))
-      return jsonify(status='OK', message='updated successfully')
-
+   return render_template('ssh/home.html',machine=machine, program=programme )
 @ssh.route('/ssh/execute', methods=['GET', 'POST'])
 @login_required
 def executescript():
    id = request.json['id']
    print (request.json)
    programme = request.json['program']
-   global folder
-   global user
-   global sid
    folder = request.json['folder']
    oracle = request.json['oracle']
-   user = oracle['user']
-   sid = oracle['sid']
    machine = VmMachine.query.get_or_404(id)
    env.host_string = machine.rootName + '@' + machine.ipAddress
    env.password = machine.passwordRoot_hs
    if(machine.os=='windows'):
-      installenvrWindows(machine)
+      for p in programme:
+         if (p['name'] == 'Oracle'):
+            sshfunc.installOracleWN(machine)
+         if (p['name'] == 'Java'):
+            sshfunc.installJavaWN(machine)
+         if (p['name'] == 'Jboss'):
+            sshfunc.installJbossWN(machine)
    else:
       for p in programme :
          if(p['name']=='Oracle'):
-          execute(installOracle)
+          execute(sshfunc.installOracleLX)
          if(p['name']=='Java'):
-          execute(installJava)
+          execute(sshfunc.installJavaLX)
          if(p['name'] == 'Jboss'):
-          execute(installJboss)
+          execute(sshfunc.installJbossLX)
 
    return jsonify(status='OK', message='updated successfully')
 
@@ -121,7 +50,7 @@ def installsolife():
    print (request.json)
    programme = request.json['solife']
    machine = VmMachine.query.get_or_404(id)
-   return True
+   return jsonify(status='ok', message='database action successfully')
 @ssh.route('/ssh/dbase', methods=['GET', 'POST'])
 @login_required
 def dbaction():
@@ -129,13 +58,25 @@ def dbaction():
    #test.runtest()
    id = request.json['id']
    print (request.json)
-   db=request.json['db']
-   machine = VmMachine.query.get_or_404(id)
-   env.host_string = machine.rootName + '@' + machine.ipAddress
-   env.password = machine.passwordRoot_hs
-   execute(datamaniplinux, db)
-
+   dump=request.json['db']
+   machine = VmMachine.query.get_or_404(5)
+   env.host_string = machine.userName + '@' + machine.ipAddress
+   env.password = machine.password_hs
+   execute(sshfunc.datamaniplinux, dump)
    return jsonify(status='ok',message='database action successfully')
+@ssh.route('/ssh/metric', methods=['GET', 'POST'])
+@login_required
+def installread():
+   id = request.json['id']
+   print (request.json)
+   machine = VmMachine.query.get_or_404(id)
+   env.host_string = machine.userName + '@' + machine.ipAddress
+   env.password = machine.password_hs
+   if (machine.os == 'linux'):
+      rsp = sshfunc.getMetricLinux(machine)
+   else:
+      rsp = sshfunc.getMetricWM(machine)
+   return jsonify(status='ok', message='database action successfully',response=rsp)
 
 
 
